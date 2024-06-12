@@ -1,0 +1,37 @@
+# Nome do workflow
+name: github-actions .NET
+
+# Eventos que acionam o workflow
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 * * * *'  # Executa a cada hora
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:  # Passos da atividade
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Ação para fazer o checkout do código
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4  # Ação para configurar o .NET Core
+        with:
+          dotnet-version: 8.0.x 
+
+      - name: Restore dependencies
+        run: dotnet restore **/*.csproj  # Comando para restaurar as dependências
+
+      - name: Build
+        run: dotnet build **/*.csproj --no-restore  # Comando para construir o projeto
+
+      - name: Custom Script
+        run: |
+          echo "Running custom script"
+          # Script personalizado para rodar os testes e mostrar uma mensagem
+          dotnet test **/*.csproj
+          echo "Tests completed successfully"
